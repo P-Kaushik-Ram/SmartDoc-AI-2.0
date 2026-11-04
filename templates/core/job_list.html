@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Jobs · SmartDoc AI{% endblock %}{% block page_title %}Jobs{% endblock %}
+{% block content %}
+<section class="page-heading"><div><div class="eyebrow">RECRUITMENT</div><h1>Job descriptions</h1><p>Manage roles and the required skills used in candidate coverage.</p></div><a class="button button-primary" href="{% url 'job_create' %}"><i class="fa-solid fa-plus"></i> Add a job</a></section>
+<section class="card">
+  <div class="toolbar"><div class="card-title"><i class="fa-solid fa-briefcase"></i> All jobs <span class="badge badge-neutral">{{ jobs.count }}</span></div>
+    <form class="toolbar-form" method="get" role="search"><input class="field" type="search" name="q" value="{{ query }}" placeholder="Search roles or skills" aria-label="Search jobs"><button class="button button-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>{% if query %}<a class="button button-secondary" href="{% url 'job_list' %}">Clear</a>{% endif %}</form>
+  </div>
+  <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Role</th><th>Required skills</th><th>Experience</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+  {% for job in jobs %}<tr>
+    <td><a class="link-primary cell-primary" href="{% url 'job_detail' job.pk %}">{{ job.title }}</a><span class="cell-secondary">{{ job.match_results.count }} candidate matches</span></td>
+    <td>{% for skill in job.get_skills_list|slice:":4" %}<span class="pill">{{ skill }}</span>{% empty %}<span class="text-muted-sm">No skills listed</span>{% endfor %}{% with total=job.get_skills_list|length %}{% if total > 4 %}<span class="pill">+{{ total|add:"-4" }}</span>{% endif %}{% endwith %}</td>
+    <td>{{ job.experience }}</td><td>{{ job.created_date|date:"M d, Y" }}</td>
+    <td><div class="table-actions"><a class="icon-button" href="{% url 'job_detail' job.pk %}" aria-label="View {{ job.title }}" title="View"><i class="fa-regular fa-eye"></i></a><a class="icon-button" href="{% url 'job_edit' job.pk %}" aria-label="Edit {{ job.title }}" title="Edit"><i class="fa-solid fa-pen"></i></a><a class="icon-button" href="{% url 'job_delete' job.pk %}" aria-label="Delete {{ job.title }}" title="Delete"><i class="fa-regular fa-trash-can"></i></a></div></td>
+  </tr>{% empty %}<tr><td colspan="5"><div class="empty-state"><span class="empty-icon"><i class="fa-solid fa-briefcase"></i></span><h3>{% if query %}No jobs match your search{% else %}No job descriptions yet{% endif %}</h3><p>{% if query %}Try another title or required skill.{% else %}Add a role and its required skills to start candidate matching.{% endif %}</p>{% if not query %}<a class="button button-primary" href="{% url 'job_create' %}">Create a job</a>{% endif %}</div></td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

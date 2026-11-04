@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="282" viewBox="0 0 1100 282" role="img" aria-labelledby="title desc">
+<title id="title">SmartDoc AI 2.0</title><desc id="desc">Intelligent Resume Analysis and Multilingual Document Understanding</desc>
+<defs><linearGradient id="bg"><stop stop-color="#0b1025"/><stop offset="1" stop-color="#251044"/></linearGradient><linearGradient id="accent"><stop stop-color="#aa83ff"/><stop offset="1" stop-color="#75ecf9"/></linearGradient><pattern id="grid" width="27" height="27" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#a980f4" opacity=".24"/></pattern></defs>
+<rect x="1" y="1" width="1098" height="280" rx="25" fill="url(#bg)" stroke="#594186"/><rect x="737" y="18" width="344" height="244" rx="16" fill="url(#grid)"/>
+<path d="M56 54h84" stroke="url(#accent)" stroke-width="4" stroke-linecap="round"/>
+<g font-family="system-ui,Segoe UI,sans-serif"><text x="54" y="91" fill="#9feafa" font-size="15" letter-spacing="3" font-weight="700">DOCUMENT INTELLIGENCE</text><text x="51" y="162" fill="#f7f2ff" font-size="63" font-weight="750">SmartDoc AI <tspan fill="#bb97ff">2.0</tspan></text><text x="55" y="207" fill="#ded2f6" font-size="22">Intelligent Resume Analysis &amp;</text><text x="55" y="237" fill="#ded2f6" font-size="22">Multilingual Document Understanding</text></g>
+<g fill="#191534" stroke-width="2"><rect x="779" y="73" width="123" height="148" rx="17" stroke="#a982ff" transform="rotate(-9 840 147)"/><rect x="930" y="73" width="123" height="148" rx="17" stroke="#7cdef0" transform="rotate(9 991 147)"/></g>
+<path d="M814 173v-22m22 22v-39m22 39v-61m100 7h62m-62 22h52m-52 22h61m-61 22h39" fill="none" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+</svg>

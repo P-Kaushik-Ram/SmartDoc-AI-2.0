@@ -1,0 +1,24 @@
+Alex Morgan
+alex@example.com | 202-555-0147
+Location: Pune, India
+https://linkedin.com/in/alex-example
+https://github.com/alex-example
+Portfolio: https://alex.example.com
+Professional Summary
+Software engineer building reliable tools.
+Technical Skills
+Python, Django, PostgreSQL, HTML, CSS, Git, C++, C#, JavaScript
+Education
+Bachelor of Technology in Computer Science
+Example University
+Specialization: Computer Science
+Graduation: 2025
+Projects
+Project: Document Insights
+Built a Django and PostgreSQL document tool; tested with Python.
+Project: Portfolio
+Developed an HTML and CSS website.
+Internships
+Developer Intern | Example Labs
+June 2024 - August 2024
+Built Python tools for 30 users.

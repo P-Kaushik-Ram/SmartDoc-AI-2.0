@@ -1,0 +1,49 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+# Python and tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage*
+htmlcov/
+node_modules/
+# Local state and private work
+*.sqlite3*
+*.db
+media/
+uploads/
+tmp/
+temp/
+smartdoc-*/
+extracted/
+ocr-output/
+staticfiles/
+*.log
+reports/
+backups/
+STAGING_REVIEW.md
+# External model and OCR data
+.cache/
+models/
+tessdata/
+*.traineddata
+*.safetensors
+*.onnx
+*.pt
+*.pth
+# Archives and local captures
+*.zip
+*.7z
+*.rar
+*.tar*
+*.bak
+Thumbs.db
+.DS_Store
+.staging-local/

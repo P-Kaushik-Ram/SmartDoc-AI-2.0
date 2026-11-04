@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} · SmartDoc AI{% endblock %}{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><div class="eyebrow">RESUME INTELLIGENCE</div><h1>{{ title }}</h1><p>Upload or update a candidate profile and process the resume for text and skill extraction.</p></div></section>
+<div class="form-layout"><section class="card"><div class="card-header"><div class="card-title"><i class="fa-regular fa-file-lines"></i> Candidate information</div></div><div class="card-body">
+  <div class="alert-toast toast-info"><i class="fa-solid fa-circle-info"></i><span>Accepted formats: PDF, DOCX, JPG, JPEG and PNG. Each file may be up to 10 MB. Choose handwriting recognition only for English handwriting; the optional TrOCR model and weights must be installed locally first.</span></div>
+  <form method="post" enctype="multipart/form-data" data-loading-form>{% csrf_token %}{% if form.non_field_errors %}<div class="field-error form-error">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}<div class="form-group"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="field-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+    <div class="form-actions"><button type="submit" class="button button-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Save &amp; process</button><a href="{% url 'candidate_list' %}" class="button button-secondary">Cancel</a></div>
+  </form>
+</div></section></div>
+{% endblock %}

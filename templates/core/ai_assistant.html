@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}AI Document Assistant · SmartDoc AI{% endblock %}
+{% block page_title %}AI Document Assistant{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><div class="eyebrow">DOCUMENT-GROUNDED AI</div><h1>AI Document Assistant</h1><p>Ask questions about reviewed resume content and inspect the passages behind each answer.</p></div>
+</section>
+<div class="assistant-layout">
+  <section class="card assistant-controls">
+    <div class="card-header"><div class="card-title"><i class="fa-regular fa-file-lines"></i> Select evidence</div><span class="badge badge-neutral">Private workspace session</span></div>
+    <div class="card-body">
+      <form method="get" action="{% url 'ai_document_assistant' %}">
+        <div class="form-group"><label class="form-label" for="assistant-candidate">Resume / candidate</label>
+          <select id="assistant-candidate" name="candidate" class="form-select" required>
+            <option value="">Choose a candidate</option>
+            {% for item in candidates %}<option value="{{ item.pk }}" {% if selected_candidate.pk == item.pk or not selected_candidate and request.GET.candidate == item.pk|stringformat:'s' %}selected{% endif %}>{{ item.name }} · {{ item.get_extraction_status_display }}{% if item.processing_mode == 'handwriting' %} · handwriting{% endif %}</option>{% endfor %}
+          </select>
+          <div class="help-text">Only completed, readable text is eligible. Handwriting output must be manually reviewed first.</div>
+        </div>
+        <div class="form-group"><label class="form-label" for="assistant-compare">Second candidate (optional)</label>
+          <select id="assistant-compare" name="compare_candidate" class="form-select"><option value="">No comparison</option>
+            {% for item in candidates %}<option value="{{ item.pk }}" {% if compared_candidate.pk == item.pk or not compared_candidate and request.GET.compare_candidate == item.pk|stringformat:'s' %}selected{% endif %}>{{ item.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label" for="assistant-job">Job (optional; required for candidate comparisons)</label>
+          <select id="assistant-job" name="job" class="form-select"><option value="">No selected job</option>
+            {% for item in jobs %}<option value="{{ item.pk }}" {% if selected_job.pk == item.pk or not selected_job and request.GET.job == item.pk|stringformat:'s' %}selected{% endif %}>{{ item.title }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="assistant-privacy"><i class="fa-solid fa-shield-halved"></i><span>Document text stays local. Configure Ollama on this computer to enable answers. The assistant never sends resumes to an external API.</span></div>
+        {% if selected_candidate %}<a class="button button-secondary" href="{% url 'candidate_resume_file' selected_candidate.pk %}" target="_blank" rel="noopener"><i class="fa-regular fa-file-pdf"></i> Open original resume</a>{% endif %}
+        <button class="button button-secondary" type="submit"><i class="fa-solid fa-check"></i> Use selected evidence</button>
+      </form>
+    </div>
+  </section>
+  <section class="card assistant-chat">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask about the evidence</div><span class="cell-secondary">Intelligent Documents. Explainable Insights.</span></div>
+      {% if selected_candidate %}<form method="post">{% csrf_token %}<input type="hidden" name="candidate" value="{{ selected_candidate.pk }}"><input type="hidden" name="compare_candidate" value="{{ compared_candidate.pk|default:'' }}"><input type="hidden" name="job" value="{{ selected_job.pk|default:'' }}"><button class="button button-secondary" name="action" value="clear" type="submit" aria-label="Clear this conversation"><i class="fa-solid fa-rotate-left"></i> Clear chat</button></form>{% endif %}
+    </div>
+    <div class="assistant-conversation" aria-live="polite">
+      {% if not history and not answer and not error %}
+      <div class="empty-state"><div class="empty-icon"><i class="fa-regular fa-comments"></i></div><h3>Start with a resume question</h3><p>Try “Summarize the candidate’s recent experience” or select a job and ask what resume evidence relates to its requirements.</p></div>
+      {% endif %}
+      {% for turn in history %}<article class="assistant-turn assistant-turn-{{ turn.role }}"><div class="assistant-role">{% if turn.role == 'user' %}You{% else %}SmartDoc AI{% endif %}</div><div>{{ turn.content|linebreaksbr }}</div></article>{% endfor %}
+      {% if error %}<div class="alert-toast toast-warning" role="alert"><i class="fa-solid fa-circle-exclamation"></i><span>{{ error }}</span></div>{% endif %}
+      {% if answer %}<article class="assistant-turn assistant-turn-assistant"><div class="assistant-role">SmartDoc AI · grounded response</div><div>{{ answer|linebreaksbr }}</div></article>
+        {% if sources %}<section class="assistant-sources"><h3>Retrieved source passages</h3>{% for source in sources %}<article class="assistant-source"><div class="assistant-source-label">[{{ source.id }}] {{ source.document }}{% if source.page %} · Page {{ source.page }}{% else %} · Page not available{% endif %}</div><blockquote>{{ source.text }}</blockquote></article>{% endfor %}</section>{% endif %}
+        <p class="help-text">The answer is generated from the passages above. Missing information means it was not found in the supplied text, not that the candidate lacks it. Verify important details against the original document.</p>
+      {% endif %}
+    </div>
+    <div class="assistant-composer">
+      <form method="post" data-loading-form>
+        {% csrf_token %}<input type="hidden" name="candidate" value="{{ selected_candidate.pk|default:'' }}"><input type="hidden" name="compare_candidate" value="{{ compared_candidate.pk|default:'' }}"><input type="hidden" name="job" value="{{ selected_job.pk|default:'' }}">
+        <label class="form-label" for="assistant-question">Your question</label>
+        <textarea id="assistant-question" name="question" class="form-control assistant-question" maxlength="1200" placeholder="Select a resume, then ask a question grounded in its extracted text…" required>{{ question }}</textarea>
+        <div class="assistant-submit"><span class="help-text">No answer is generated when the local model is unavailable.</span><button class="button button-primary" type="submit" name="action" value="ask"><i class="fa-solid fa-paper-plane"></i> Ask assistant</button></div>
+      </form>
+    </div>
+  </section>
+</div>
+<section class="card assistant-limitations"><div class="card-body"><strong>Use as a research aid.</strong> Scores and generated summaries are not hiring decisions. Confirm cited evidence in the original resume, especially when OCR or handwriting required review.</div></section>
+{% endblock %}

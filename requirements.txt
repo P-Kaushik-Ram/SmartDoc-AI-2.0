@@ -1,0 +1,10 @@
+# Direct dependencies verified on CPython 3.14 (Windows).
+Django==6.1.3
+pypdfium2==5.14.0
+python-docx==1.2.0
+openpyxl==3.1.5
+Pillow==13.0.0
+google-genai==1.75.0
+python-dotenv==1.2.2
+# Tesseract's executable and language packs are installed separately.
+pytesseract==0.3.13

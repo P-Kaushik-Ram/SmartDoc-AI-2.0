@@ -1,0 +1,37 @@
+/* Shared theme contract. Light is the first-visit default. */
+:root {
+ color-scheme:light; --page-bg:#f6f7ff; --surface:#ffffff; --surface-secondary:#f0f2ff;
+ --surface-raised:#fafbff; --text-primary:#101a3d; --text-secondary:#586581;
+ --accent-primary:#5548f5; --accent-secondary:#8b5cf6; --accent-text:#5542cf;
+ --accent-cyan:#087f9d; --border:#e2e6f4; --border-active:#ada2fb;
+ --success:#207351; --success-bg:#eaf8f1; --warning:#8a531f; --warning-bg:#fff4e7;
+ --error:#aa304c; --error-bg:#fff0f3; --accent-soft:#eeebff;
+ --header-bg:#ffffffed; --hero-glow:#e4dbff; --cyan-glow:#cff5ff;
+ --button-bg:linear-gradient(115deg,#6545f5,#4b3bea); --button-text:#fff;
+ --shadow:0 8px 28px #3a337a09; --shadow-lg:0 24px 64px #4a35a51a;
+ --chart-1:#6455eb; --chart-2:#3384e9; --chart-3:#169f9c; --chart-4:#de8d37;
+ --chart-5:#aa54bd; --chart-6:#5676b7; --chart-7:#738943;
+ --bg:var(--page-bg); --ink:var(--text-primary); --muted:var(--text-secondary);
+ --line:var(--border); --indigo:var(--accent-text); --violet:var(--accent-secondary);
+ --soft:var(--accent-soft); --accent-hover:#4632cf; --radius:16px;
+ --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
+}
+:root[data-theme="dark"] {
+ color-scheme:dark; --page-bg:#080b1d; --surface:#10152c; --surface-secondary:#171b3a;
+ --surface-raised:#141a34; --text-primary:#f6f5ff; --text-secondary:#adb7d6;
+ --accent-primary:#8b5cf6; --accent-secondary:#ce61e8; --accent-text:#bea6ff;
+ --accent-cyan:#3dd8ec; --border:#293158; --border-active:#8257d9;
+ --success:#6be0b4; --success-bg:#102d2c; --warning:#f1bd7b; --warning-bg:#302533;
+ --error:#ffa3b6; --error-bg:#361c34; --accent-soft:#241b46;
+ --header-bg:#080c20ed; --hero-glow:#411784; --cyan-glow:#063a60;
+ --button-bg:linear-gradient(115deg,#763fe2,#922fc3); --button-text:#fff;
+ --shadow:0 8px 30px #02041433; --shadow-lg:0 24px 70px #03041688;
+ --chart-1:#a17aff; --chart-2:#38c9ed; --chart-3:#31d5b5; --chart-4:#f5a45f;
+ --chart-5:#e66dce; --chart-6:#759dff; --chart-7:#bfca70;
+}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;width:42px;height:38px;padding:8px;border:1px solid var(--border);border-radius:12px;background:var(--surface-secondary);color:var(--accent-text);cursor:pointer}
+.theme-toggle svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.theme-toggle:hover{border-color:var(--border-active);background:var(--accent-soft)}
+.theme-toggle:focus-visible{outline:3px solid var(--accent-primary);outline-offset:3px}
+.theme-icon-sun{display:none}:root[data-theme="dark"] .theme-icon-sun{display:block}:root[data-theme="dark"] .theme-icon-moon{display:none}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

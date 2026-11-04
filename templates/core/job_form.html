@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} · SmartDoc AI{% endblock %}{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="page-heading"><div><div class="eyebrow">JOBS</div><h1>{{ title }}</h1><p>Define the role details and the skills used for explainable candidate coverage.</p></div></section>
+<div class="form-layout"><section class="card"><div class="card-header"><div class="card-title"><i class="fa-solid fa-briefcase"></i> Job details</div></div><div class="card-body">
+  <form method="post" data-loading-form>{% csrf_token %}{% if form.non_field_errors %}<div class="field-error form-error">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}<div class="form-group"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="field-error">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+    <div class="form-actions"><button type="submit" class="button button-primary"><i class="fa-regular fa-floppy-disk"></i> Save job</button><a href="{% url 'job_list' %}" class="button button-secondary">Cancel</a></div>
+  </form>
+</div></section></div>
+{% endblock %}

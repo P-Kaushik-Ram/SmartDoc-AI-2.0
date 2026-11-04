@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Overview · SmartDoc AI{% endblock %}
+{% block page_title %}Overview{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><div class="eyebrow">WORKSPACE ANALYTICS</div><h1>Recruitment overview</h1><p>{{ scope_label }} · database-backed activity and explainable match insights.</p></div>
+  <a class="button button-secondary" href="{% url 'ranking' %}"><i class="fa-solid fa-arrow-up-wide-short"></i> View rankings</a>
+</section>
+
+<section class="card analytics-filters" aria-label="Dashboard filters">
+  <form method="get" class="analytics-filter-form" data-loading-form>
+    <div class="form-group"><label class="form-label" for="filter-job">Job</label><select class="form-select" id="filter-job" name="job"><option value="">All candidates</option>{% for job in jobs %}<option value="{{ job.pk }}" {% if job_id == job.pk|stringformat:'s' %}selected{% endif %}>{{ job.title }}</option>{% endfor %}</select></div>
+    <div class="form-group"><label class="form-label" for="filter-status">Document status</label><select class="form-select" id="filter-status" name="status"><option value="">All statuses</option>{% for key,label in status_choices %}<option value="{{ key }}" {% if status_filter == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="form-group"><label class="form-label" for="filter-method">Matching method</label><select class="form-select" id="filter-method" name="method"><option value="">All methods</option><option value="baseline" {% if method_filter == 'baseline' %}selected{% endif %}>Skill coverage</option><option value="hybrid" {% if method_filter == 'hybrid' %}selected{% endif %}>Hybrid semantic</option></select></div>
+    <div class="form-group"><label class="form-label" for="filter-from">From date</label><input class="form-control" id="filter-from" type="date" name="date_from" value="{{ date_from }}"></div>
+    <div class="form-group"><label class="form-label" for="filter-to">To date</label><input class="form-control" id="filter-to" type="date" name="date_to" value="{{ date_to }}"></div>
+    <div class="analytics-filter-actions"><button class="button button-primary" type="submit"><i class="fa-solid fa-filter"></i> Apply filters</button><a class="button button-secondary" href="{% url 'dashboard' %}">Clear</a></div>
+  </form>
+  <p class="help-text">Date filters use candidate upload dates and match-result dates. Job scope uses candidates with a saved match for that job.</p>
+</section>
+
+<section class="stat-grid analytics-stat-grid" aria-label="Filtered workspace metrics">
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Candidates in scope</span><span class="stat-icon"><i class="fa-solid fa-users"></i></span></div><div class="stat-value">{{ total_candidates }}</div><div class="stat-note">{{ scope_label }}</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Job records</span><span class="stat-icon"><i class="fa-solid fa-briefcase"></i></span></div><div class="stat-value">{{ total_jobs }}</div><div class="stat-note">Available in workspace</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Documents processed</span><span class="stat-icon"><i class="fa-regular fa-file-lines"></i></span></div><div class="stat-value">{{ documents_processed }}</div><div class="stat-note">Completed, review or failed status</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Successful extractions</span><span class="stat-icon"><i class="fa-solid fa-circle-check"></i></span></div><div class="stat-value">{{ successful_extractions }}</div><div class="stat-note">Completed status only</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Failed extractions</span><span class="stat-icon"><i class="fa-solid fa-circle-exclamation"></i></span></div><div class="stat-value">{{ failed_extractions }}</div><div class="stat-note">Requires retry or manual entry</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Manual review</span><span class="stat-icon"><i class="fa-solid fa-eye"></i></span></div><div class="stat-value">{{ documents_needing_review }}</div><div class="stat-note">Review-required documents</div></article>
+  <article class="stat-card"><div class="stat-top"><span class="stat-label">Valid matching results</span><span class="stat-icon"><i class="fa-solid fa-ranking-star"></i></span></div><div class="stat-value">{{ total_matches }}</div><div class="stat-note">Across {{ valid_candidate_count }} eligible candidates</div></article>
+</section>
+
+<section class="analytics-grid">
+  <article class="card analytics-card">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-chart-column"></i> Match-score distribution</div><span class="cell-secondary">{{ total_matches }} eligible result{{ total_matches|pluralize }} · {{ scope_label }}</span></div></div>
+    {% if total_matches %}<div class="analytics-chart"><canvas data-analytics-chart="bar" data-chart-data="score-chart-data" role="img" aria-label="Match score distribution from saved eligible results"></canvas></div>
+    {% else %}<div class="empty-state"><span class="empty-icon"><i class="fa-solid fa-chart-column"></i></span><h3>No scores in this scope</h3><p>Choose another filter or calculate a match for an extracted candidate.</p></div>{% endif %}
+  </article>
+
+  <article class="card analytics-card">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-list-check"></i> Document status</div><span class="cell-secondary">Failed and incomplete records are not counted as successful</span></div></div>
+    {% if total_candidates %}<div class="analytics-chart"><canvas data-analytics-chart="doughnut" data-chart-data="status-chart-data" role="img" aria-label="Candidate document extraction statuses"></canvas></div><div class="chart-legend analytics-legend">{% for item in status_distribution %}<div class="legend-row"><span>{{ item.label }}</span><strong>{{ item.count }}</strong></div>{% endfor %}</div>
+    {% else %}<div class="empty-state"><h3>No candidate records</h3><p>Document status analytics will appear after resumes are added.</p></div>{% endif %}
+  </article>
+
+  <article class="card analytics-card">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-code-branch"></i> Comparable matching scores</div><span class="cell-secondary">Same hybrid results, comparing stored skill baseline and hybrid total</span></div></div>
+    {% if method_comparison.count %}<div class="analytics-chart analytics-chart--short"><canvas data-analytics-chart="bar" data-chart-data="comparison-chart-data" role="img" aria-label="Average skill baseline and hybrid scores for the same results"></canvas></div><div class="analytics-note">{{ method_comparison.count }} comparable result{{ method_comparison.count|pluralize }} · averages, not hiring probabilities</div>
+    {% else %}<div class="empty-state"><h3>No comparable hybrid scores</h3><p>{% if method_filter == 'baseline' %}Clear the method filter to view stored hybrid comparisons.{% else %}Hybrid results store their skill baseline and semantic total together; no comparable records are available in this scope.{% endif %}</p></div>{% endif %}
+  </article>
+
+  <article class="card analytics-card">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Common candidate skills</div><span class="cell-secondary">Distinct candidates per skill · verified scope</span></div></div>
+    {% if skill_stats.skills %}<div class="analytics-chart"><canvas data-analytics-chart="bar-horizontal" data-chart-data="skills-chart-data" role="img" aria-label="Most frequently occurring candidate skills"></canvas></div><div class="analytics-note">{{ skill_stats.reviewed_candidates }} from reviewed text/profile · {{ skill_stats.automatic_candidates }} from completed standard extraction · {{ skill_stats.excluded_unreviewed_handwriting }} unreviewed handwriting record{{ skill_stats.excluded_unreviewed_handwriting|pluralize }} excluded</div>
+    {% else %}<div class="empty-state"><h3>No verified skills in this scope</h3><p>Skills use reviewed profile/text when available and otherwise completed standard extractions. Unreviewed handwriting and review-required extractions are excluded.</p></div>{% endif %}
+  </article>
+
+  <article class="card analytics-card">
+    <div class="card-header"><div><div class="card-title"><i class="fa-solid fa-file-circle-check"></i> Extraction methods</div><span class="cell-secondary">Methods recorded on candidate document records</span></div></div>
+    {% if document_methods %}<div class="analytics-chart"><canvas data-analytics-chart="bar" data-chart-data="document-method-chart-data" role="img" aria-label="Recorded document extraction methods"></canvas></div><div class="analytics-legend">{% for item in document_methods %}<div class="legend-row"><span>{{ item.label }}</span><strong>{{ item.count }}</strong></div>{% endfor %}</div>
+    {% else %}<div class="empty-state"><h3>No extraction method data</h3><p>Method analytics appear when extraction metadata has been recorded.</p></div>{% endif %}
+    <p class="analytics-note">Processing duration is omitted: the current schema has no reliable processing-start timestamp.</p>
+  </article>
+
+  <article class="card analytics-card">
+    <div class="card-header"><div class="card-title"><i class="fa-solid fa-eye"></i> Needs attention</div><a class="button button-secondary" href="{% url 'candidate_list' %}">All candidates</a></div>
+    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Candidate</th><th>Status</th><th>Mode</th></tr></thead><tbody>
+      {% for candidate in attention_candidates %}<tr><td><a class="link-primary" href="{% url 'candidate_detail' candidate.pk %}">{{ candidate.name }}</a></td><td>{% if candidate.extraction_status == 'pending' %}<span class="badge badge-neutral">Pending</span>{% else %}<span class="badge badge-rec">Review required</span>{% endif %}</td><td>{{ candidate.get_processing_mode_display }}</td></tr>
+      {% empty %}<tr><td colspan="3"><div class="empty-state"><h3>No pending reviews</h3><p>No pending or review-required candidate documents match these filters.</p></div></td></tr>{% endfor %}
+    </tbody></table></div>
+  </article>
+</section>
+
+<section class="dashboard-bottom analytics-lower-grid">
+  <article class="card"><div class="card-header"><div class="card-title"><i class="fa-solid fa-ranking-star"></i> Highest saved matches</div><a class="button button-secondary" href="{% url 'ranking' %}">All rankings</a></div><div class="data-table-wrap"><table class="data-table"><thead><tr><th>Candidate</th><th>Role</th><th>Score</th><th>Method</th></tr></thead><tbody>
+    {% for r in top_matches %}<tr><td><a class="link-primary" href="{% url 'candidate_detail' r.candidate.pk %}">{{ r.candidate.name }}</a></td><td><a class="link-primary" href="{% url 'job_detail' r.job.pk %}">{{ r.job.title }}</a></td><td>{{ r.match_percentage }}%</td><td>{{ r.explanation.method|default:'baseline'|title }}</td></tr>{% empty %}<tr><td colspan="4"><div class="empty-state"><h3>No eligible matches</h3><p>Only saved scores attached to completed, readable extractions are shown here.</p></div></td></tr>{% endfor %}
+  </tbody></table></div><p class="analytics-note">A match score describes resume/job relevance under the selected method. It is not a probability of hiring success.</p></article>
+  <article class="card"><div class="card-header"><div class="card-title"><i class="fa-regular fa-clock"></i> Recent candidates</div><a class="button button-secondary" href="{% url 'candidate_list' %}">View all</a></div><div class="data-table-wrap"><table class="data-table"><thead><tr><th>Candidate</th><th>Experience</th><th>Extraction</th></tr></thead><tbody>
+    {% for c in recent_candidates %}<tr><td><a class="link-primary" href="{% url 'candidate_detail' c.pk %}">{{ c.name }}</a></td><td>{{ c.experience }}</td><td>{{ c.get_extraction_status_display }}</td></tr>{% empty %}<tr><td colspan="3"><div class="empty-state"><h3>No candidates in this scope</h3><p>Adjust filters or add a candidate record.</p></div></td></tr>{% endfor %}
+  </tbody></table></div></article>
+</section>
+
+{{ score_distribution_data|json_script:'score-chart-data' }}
+{{ status_chart_data|json_script:'status-chart-data' }}
+{{ comparison_data|json_script:'comparison-chart-data' }}
+{{ skill_chart_data|json_script:'skills-chart-data' }}
+{{ document_method_data|json_script:'document-method-chart-data' }}
+{% endblock %}

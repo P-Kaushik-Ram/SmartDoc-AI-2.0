@@ -1,0 +1,7 @@
+# Optional local semantic matching. PyTorch is installed as a dependency of
+# Sentence Transformers. For GPU builds, select the matching PyTorch wheel first
+# using the official PyTorch selector, then install this file.
+sentence-transformers>=5.4,<6
+# Keep the optional stack compatible with this project's Transformers 4.x
+# TrOCR setup when both local models are used in one environment.
+transformers>=4.44,<5.0

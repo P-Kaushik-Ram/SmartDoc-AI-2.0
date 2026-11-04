@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Resume Intelligence · SmartDoc AI{% endblock %}{% block page_title %}Resume Intelligence{% endblock %}
+{% block content %}
+<section class="page-heading"><div><div class="eyebrow">DOCUMENT INTELLIGENCE</div><h1>Candidate resumes</h1><p>Review extracted profiles, inspect document status and compare skills against open roles.</p></div><a class="button button-primary" href="{% url 'candidate_create' %}"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload resume</a></section>
+<section class="card">
+  <div class="toolbar"><div class="card-title"><i class="fa-regular fa-file-lines"></i> Candidate records <span class="badge badge-neutral">{{ candidates.count }}</span></div>
+    <form class="toolbar-form" method="get" role="search"><input class="field" type="search" name="q" value="{{ query }}" placeholder="Name or email" aria-label="Search candidates"><input class="field" type="search" name="skill" value="{{ skill_filter }}" placeholder="Filter by skill" aria-label="Filter by skill"><select class="field" name="job" aria-label="Filter by matching job"><option value="">All jobs</option>{% for j in jobs %}<option value="{{ j.pk }}" {% if job_filter == j.pk|stringformat:"s" %}selected{% endif %}>{{ j.title }}</option>{% endfor %}</select><button class="button button-secondary" type="submit"><i class="fa-solid fa-filter"></i> Filter</button>{% if query or skill_filter or job_filter %}<a class="button button-secondary" href="{% url 'candidate_list' %}">Clear</a>{% endif %}</form>
+  </div>
+  <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Candidate</th><th>Contact</th><th>Experience</th><th>Skills detected</th><th>Document</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>
+  {% for c in candidates %}<tr>
+    <td><div class="person-cell"><span class="avatar">{{ c.name|first|upper }}</span><span><a class="link-primary cell-primary" href="{% url 'candidate_detail' c.pk %}">{{ c.name }}</a><span class="cell-secondary">Candidate profile</span></span></div></td>
+    <td>{{ c.email }}<span class="cell-secondary">{{ c.mobile }}</span></td><td>{{ c.experience }}</td>
+    <td>{% with skills=c.get_skills_list %}{% for skill in skills|slice:":3" %}<span class="pill">{{ skill }}</span>{% empty %}<span class="text-muted-sm">Not extracted</span>{% endfor %}{% if skills|length > 3 %}<span class="pill">+{{ skills|length|add:"-3" }}</span>{% endif %}{% endwith %}</td>
+    <td>{% if c.extraction_status == 'completed' %}<span class="badge badge-high">Processed</span>{% elif c.extraction_status == 'failed' %}<span class="badge badge-no">Failed</span>{% else %}<span class="badge badge-rec">Review</span>{% endif %}</td><td>{{ c.uploaded_at|date:"M d, Y" }}</td>
+    <td><div class="table-actions"><a class="icon-button" href="{% url 'candidate_detail' c.pk %}" aria-label="View {{ c.name }}" title="View"><i class="fa-regular fa-eye"></i></a><a class="icon-button" href="{% url 'candidate_edit' c.pk %}" aria-label="Edit {{ c.name }}" title="Edit"><i class="fa-solid fa-pen"></i></a><a class="icon-button" href="{% url 'candidate_delete' c.pk %}" aria-label="Delete {{ c.name }}" title="Delete"><i class="fa-regular fa-trash-can"></i></a></div></td>
+  </tr>{% empty %}<tr><td colspan="7"><div class="empty-state"><span class="empty-icon"><i class="fa-regular fa-file-lines"></i></span><h3>{% if query or skill_filter or job_filter %}No candidates match these filters{% else %}No candidates uploaded yet{% endif %}</h3><p>{% if query or skill_filter or job_filter %}Try changing your search or clearing the filters.{% else %}Upload a resume to extract searchable text and skills.{% endif %}</p>{% if not query and not skill_filter and not job_filter %}<a class="button button-primary" href="{% url 'candidate_create' %}">Upload first resume</a>{% endif %}</div></td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

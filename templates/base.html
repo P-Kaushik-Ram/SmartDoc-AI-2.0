@@ -1,0 +1,78 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7ff"><script src="{% static 'core/js/theme.js' %}"></script><link rel="stylesheet" href="{% static 'core/css/themes.css' %}">
+  <title>{% block title %}SmartDoc AI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'core/css/app.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% if user.is_authenticated %}app-body{% else %}auth-body{% endif %}">
+{% if user.is_authenticated %}
+  <div class="sidebar-scrim" data-sidebar-close></div>
+  <aside class="sidebar" id="appSidebar" aria-label="Main navigation">
+    <a class="brand" href="{% url 'dashboard' %}">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span class="brand-copy"><strong>SmartDoc <b>AI</b></strong><small>Intelligent Documents</small></span>
+    </a>
+    <div class="workspace-label">WORKSPACE</div>
+    <nav class="side-nav">
+      <a href="{% url 'home' %}" class="side-link"><i class="fa-solid fa-house"></i><span>SmartDoc AI 2.0 Home</span></a>
+      <a href="{% url 'resume_analyzer' %}" class="side-link"><i class="fa-regular fa-file-lines"></i><span>Resume Analyzer</span></a>
+      <a href="{% url 'document_studio' %}" class="side-link"><i class="fa-solid fa-expand"></i><span>Document Studio</span></a>
+      <a href="{% url 'dashboard' %}" class="side-link {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'home' %}is-active{% endif %}"><i class="fa-solid fa-chart-pie"></i><span>Overview</span></a>
+      <a href="{% url 'candidate_list' %}" class="side-link {% if request.resolver_match.url_name == 'candidate_list' or request.resolver_match.url_name == 'candidate_create' or request.resolver_match.url_name == 'candidate_edit' or request.resolver_match.url_name == 'save_document_review' %}is-active{% endif %}"><i class="fa-regular fa-file-lines"></i><span>Resume Intelligence</span></a>
+      <a href="{% url 'job_list' %}" class="side-link {% if 'job' in request.resolver_match.url_name %}is-active{% endif %}"><i class="fa-solid fa-briefcase"></i><span>Jobs</span></a>
+      <a href="{% url 'candidate_list' %}" class="side-link {% if request.resolver_match.url_name == 'candidate_detail' or request.resolver_match.url_name == 'run_match' or request.resolver_match.url_name == 'match_all_candidates' %}is-active{% endif %}"><i class="fa-solid fa-arrow-up-wide-short"></i><span>Candidate Matching</span></a>
+      <a href="{% url 'ranking' %}" class="side-link {% if request.resolver_match.url_name == 'ranking' %}is-active{% endif %}"><i class="fa-solid fa-ranking-star"></i><span>Rankings</span></a>
+      <a href="{% url 'ai_document_assistant' %}" class="side-link {% if request.resolver_match.url_name == 'ai_document_assistant' %}is-active{% endif %}"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Document Assistant</span></a>
+    </nav>
+    <div class="workspace-label nav-spacer">WORKSPACE TOOLS</div>
+    <nav class="side-nav">
+      <a href="{% url 'export_excel' %}" class="side-link"><i class="fa-solid fa-file-export"></i><span>Reports &amp; Exports</span></a>
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}" class="side-link"><i class="fa-solid fa-sliders"></i><span>Admin</span></a>{% endif %}
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-note"><span class="status-dot"></span><span><strong>Workspace ready</strong><small>Document tools available</small></span></div>
+      <div class="profile-row">
+        <span class="avatar avatar-small">{{ user.username|first|upper }}</span>
+        <span class="profile-copy"><strong>{{ user.username }}</strong><small>{% if user.is_staff %}Administrator{% else %}Recruiter{% endif %}</small></span>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="icon-button" type="submit" aria-label="Sign out" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button></form>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-shell">
+    <header class="topbar">
+      <div class="topbar-start">
+        <button class="icon-button mobile-menu" type="button" data-sidebar-toggle aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+        <span class="topbar-context">SmartDoc AI <i class="fa-solid fa-chevron-right"></i></span>
+        <span class="topbar-page">{% block page_title %}Overview{% endblock %}</span>
+      </div>
+      <div class="topbar-actions">{% include 'studio/theme_toggle.html' %}
+        <a class="button button-secondary topbar-create" href="{% url 'job_create' %}"><i class="fa-solid fa-plus"></i><span>New job</span></a>
+        <a class="button button-primary" href="{% url 'candidate_create' %}"><i class="fa-solid fa-arrow-up-from-bracket"></i><span>Upload resume</span></a>
+      </div>
+    </header>
+    <div class="page-content">
+      {% for message in messages %}
+      <div class="toast-message toast-{{ message.tags|default:'info' }}" role="status" data-toast><i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i><span>{{ message }}</span><button type="button" class="toast-dismiss" aria-label="Dismiss notification">&times;</button></div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+{% else %}
+  {% for message in messages %}<div class="auth-toast toast-{{ message.tags|default:'info' }}" role="status">{{ message }}</div>{% endfor %}
+  <div class="auth-theme-control">{% include 'studio/theme_toggle.html' %}</div>{% block auth_content %}{% endblock %}
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+<script src="{% static 'core/js/app.js' %}" defer></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

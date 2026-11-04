@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Sign in · SmartDoc AI{% endblock %}
+{% block auth_content %}
+<main class="auth-shell">
+  <section class="auth-brand-panel">
+    <a class="brand" href="{% url 'login' %}"><span class="brand-mark">S</span><span class="brand-copy"><strong>SmartDoc <b>AI</b></strong><small>Intelligent Documents</small></span></a>
+    <div class="auth-hero"><div class="eyebrow">INTELLIGENT DOCUMENTS. EXPLAINABLE INSIGHTS.</div><h1>Make every resume<br>easier to <span>understand.</span></h1><p>Bring candidate documents, job requirements and clear skill coverage together in one focused workspace.</p><div class="auth-features"><div class="auth-feature"><i class="fa-regular fa-file-lines"></i>PDF, DOCX and image document processing</div><div class="auth-feature"><i class="fa-solid fa-list-check"></i>Candidate review with extracted skills</div><div class="auth-feature"><i class="fa-solid fa-chart-simple"></i>Explainable matching and ranking</div><div class="auth-feature"><i class="fa-solid fa-file-export"></i>Spreadsheet exports for your workflow</div></div></div>
+    <div class="auth-foot">© 2026 SmartDoc AI · Intelligent Documents. Explainable Insights.</div>
+  </section>
+  <section class="auth-form-panel"><div class="auth-form-box"><div class="eyebrow">RECRUITER WORKSPACE</div><h2>Welcome back</h2><p>Sign in to continue to your workspace.</p>
+    {% if form.non_field_errors %}<div class="auth-error" role="alert"><i class="fa-solid fa-circle-exclamation"></i><span>{{ form.non_field_errors.0 }}</span></div>{% endif %}
+    <form method="post" data-loading-form>{% csrf_token %}
+      <div class="form-group"><label class="form-label" for="id_username">Username</label><input id="id_username" type="text" name="username" class="form-control" placeholder="Enter your username" autocomplete="username" required autofocus value="{{ form.username.value|default:'' }}"></div>
+      <div class="form-group"><label class="form-label" for="id_password">Password</label><input id="id_password" type="password" name="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required></div>
+      <button type="submit" class="button button-primary auth-submit">Sign in <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
+  </div></section>
+</main>
+{% endblock %}

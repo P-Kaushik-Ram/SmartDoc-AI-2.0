@@ -1,0 +1,23 @@
+{% extends 'studio/base.html' %}{% block content %}
+<section class="hero">
+ <div class="hero-copy"><div class="eyebrow hero-badge"><svg><use href="#spark"/></svg> AI-POWERED DOCUMENT INTELLIGENCE</div>
+ <h1>Smarter Documents.<br><span>Better Insights.</span></h1>
+ <p class="hero-detail">Analyze resumes, uncover career insights, and transform printed or handwritten documents into editable text with AI-powered tools.</p>
+ <div class="hero-actions"><a class="button primary" href="{% url 'resume_analyzer' %}">Explore Resume Analyzer <svg><use href="#arrow"/></svg></a><a class="button secondary" href="{% url 'document_studio' %}">Open Document Studio</a></div>
+ <p class="hero-footnote"><svg><use href="#check"/></svg> Two focused workspaces. Your next step, simplified.</p></div>
+ <div class="intelligence-art" aria-hidden="true">
+ <div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div><div class="art-backplate"></div>
+ <div class="art-resume"><span class="art-document-label">RESUME</span><div class="art-profile"><span class="art-avatar"></span><div><i></i><i></i><i></i></div></div><div class="art-lines"><i></i><i></i></div><div class="art-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="art-bottom-line"></div></div>
+ <div class="art-ocr"><span class="art-document-label">PDF / OCR</span><div class="art-scripts"><span>அ</span><span>आ</span><span>A</span></div><div class="art-lines"><i></i><i></i><i></i><i></i></div><div class="art-text-line"></div></div>
+ <span class="art-floating art-chip"><svg><use href="#spark"/></svg> AI analysis</span><span class="art-floating art-handwriting"><svg><use href="#pen"/></svg> Handwriting<br>recognition</span>
+ <span class="art-spark spark-a"><svg><use href="#spark"/></svg></span><span class="art-spark spark-b"><svg><use href="#spark"/></svg></span><span class="art-spark spark-c"><svg><use href="#scan"/></svg></span>
+ </div>
+</section>
+<section id="workspaces" class="home-features" aria-labelledby="workspace-title"><div class="section-heading"><div><span class="eyebrow">YOUR DOCUMENT TOOLKIT</span><h2 id="workspace-title">One platform. More possibilities.</h2></div><span class="muted">From information to something useful.</span></div><div class="feature-grid">
+ <a class="feature-card" href="{% url 'resume_analyzer' %}"><span class="feature-icon blue"><svg><use href="#chart"/></svg></span><h3>Resume Analytics<br>&amp; Job Matching</h3><p>Discover your skills, completeness, and alignment with a role.</p><span class="feature-link">Explore insights <svg><use href="#arrow"/></svg></span></a>
+ <a class="feature-card" href="{% url 'document_studio' %}?mode=printed"><span class="feature-icon"><svg><use href="#file"/></svg></span><h3>Multilingual<br>Printed OCR</h3><p>Extract printed text in English, Tamil, Hindi, Telugu, and Malayalam.</p><span class="feature-link">Extract text <svg><use href="#arrow"/></svg></span></a>
+ <a class="feature-card" href="{% url 'document_studio' %}?mode=handwriting"><span class="feature-icon cyan"><svg><use href="#pen"/></svg></span><h3>AI Handwriting<br>Recognition</h3><p>Choose Gemini, TrOCR, Tesseract, or compare local results.</p><span class="feature-link">Digitize notes <svg><use href="#arrow"/></svg></span></a>
+ <a class="feature-card" href="{% url 'document_studio' %}"><span class="feature-icon violet"><svg><use href="#edit"/></svg></span><h3>Editable Text<br>&amp; Downloads</h3><p>Make it yours. Review, edit, copy, and download Unicode text.</p><span class="feature-link">Open your editor <svg><use href="#arrow"/></svg></span></a>
+</div></section>
+<section class="principles"><div><span class="principle-icon">01</span><span><strong>Upload a document</strong><small>A resume, printed page, or handwritten note.</small></span></div><div><span class="principle-icon">02</span><span><strong>Find clarity</strong><small>Review the insights or refine extracted text.</small></span></div><div><span class="principle-icon">03</span><span><strong>Keep control</strong><small>Local tools or Gemini with explicit consent.</small></span></div></section>
+{% endblock %}
